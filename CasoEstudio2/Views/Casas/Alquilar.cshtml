@@ -1,0 +1,64 @@
+@model AlquilerCasaViewModel
+
+@{
+    ViewData["Title"] = "Alquilar casa";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <h1 class="display-5">Alquilar casa</h1>
+            <p class="text-muted">Seleccione una casa disponible e indique el usuario del alquiler.</p>
+
+            <form asp-action="Alquilar" method="post" class="card shadow-sm">
+                <div class="card-body p-4">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="mb-3">
+                        <label asp-for="IdCasa" class="form-label"></label>
+                        <select asp-for="IdCasa" class="form-select" id="IdCasa">
+                            <option value="">Seleccione una casa</option>
+                            @foreach (var casa in Model.CasasDisponibles)
+                            {
+                                if (Model.IdCasa == casa.IdCasa)
+                                {
+                                    <option value="@casa.IdCasa" data-precio="@casa.PrecioCasa.ToString(System.Globalization.CultureInfo.InvariantCulture)" selected>@casa.DescripcionCasa</option>
+                                }
+                                else
+                                {
+                                    <option value="@casa.IdCasa" data-precio="@casa.PrecioCasa.ToString(System.Globalization.CultureInfo.InvariantCulture)">@casa.DescripcionCasa</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="IdCasa" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="PrecioCasa" class="form-label"></label>
+                        <input asp-for="PrecioCasa" class="form-control" id="PrecioCasa" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="UsuarioAlquiler" class="form-label"></label>
+                        <input asp-for="UsuarioAlquiler" class="form-control" maxlength="30" />
+                        <span asp-validation-for="UsuarioAlquiler" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Alquilar</button>
+                    <a asp-action="Consultar" class="btn btn-outline-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const casas = document.getElementById('IdCasa');
+            const precio = document.getElementById('PrecioCasa');
+            function actualizarPrecio() {
+                precio.value = casas.options[casas.selectedIndex]?.dataset.precio ?? '';
+            }
+            casas.addEventListener('change', actualizarPrecio);
+            actualizarPrecio();
+        })();
+    </script>
+}

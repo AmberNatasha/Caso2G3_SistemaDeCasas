@@ -1,0 +1,76 @@
+@model List<CasasModel>
+
+@{
+    ViewData["Title"] = "Consultar Casas";
+}
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">Consultar Casas</h1>
+            <p class="text-muted">Listado de casas registradas en el sistema</p>
+        </div>
+        <div class="col-auto d-flex align-items-center">
+            <a asp-controller="Casas" asp-action="Alquilar" class="btn btn-primary">Alquilar casa</a>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(ViewBag.Error))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> @ViewBag.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Mensaje"] is string mensaje)
+    {
+        <div class="alert alert-success" role="alert">@mensaje</div>
+    }
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Usuario</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var casa in Model)
+                    {
+                        <tr>
+                            <td>@casa.DescripcionCasa</td>
+                            <td><strong>$@casa.PrecioCasa.ToString("N2")</strong></td>
+                            <td>@(string.IsNullOrEmpty(casa.UsuarioAlquiler) ? "N/A" : casa.UsuarioAlquiler)</td>
+                            <td>
+                                @if (string.IsNullOrEmpty(casa.UsuarioAlquiler))
+                                {
+                                    <span class="badge bg-success">Disponible</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Reservada</span>
+                                }
+                            </td>
+                            <td>@(casa.FechaAlquiler.HasValue ? casa.FechaAlquiler.Value.ToString("dd/MM/yyyy") : "N/A")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning" role="alert">
+            <strong>Sin resultados:</strong> No hay casas registradas en el sistema.
+        </div>
+    }
+</div>
+
+
